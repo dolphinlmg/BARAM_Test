@@ -53,7 +53,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker pull ${{ steps.docker_meta.outputs.tags }}
-            docker stop $(docker ps -a -q -f "${{ steps.docker_meta.outputs.tags }}")
-            docker rm $(docker ps -a -q -f "${{ steps.docker_meta.outputs.tags }}")
+            docker stop $(docker ps -a -q -f "NAME=${{ secrets.DOCKER_NAME }}")
+            docker rm $(docker ps -a -q -f "NAME=${{ secrets.DOCKER_NAME }}")
             docker run -d -p 3000:3000 --name ${{ secrets.DOCKER_NAME }} ${{ steps.docker_meta.outputs.tags }}
             docker image prune -f
