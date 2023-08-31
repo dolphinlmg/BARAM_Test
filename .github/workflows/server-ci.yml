@@ -10,6 +10,9 @@ on:
 
 jobs:
   install_dependencies:
+    defaults:
+      run:
+        working-directory: server
     uses: ./.github/workflows/install-dependency.yml
     with: 
       cache-dependency-path: server/node_modules
