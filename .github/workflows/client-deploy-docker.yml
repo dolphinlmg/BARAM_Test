@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - client/**
+    tags: 
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -14,6 +16,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ${{ secrets.DOCKERHUB_REPOSITORY }}
+          tag-semver: |
+            {{ version }}
+            {{ major }}.{{ minor }}
         
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -30,7 +41,8 @@ jobs:
           context: ./client
           file: ./client/docker/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
           platforms: linux/amd64
         
       - name: Client Deploy
@@ -42,7 +54,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest
-            docker stop $(docker ps -a -q -f "${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest")
-            docker rm $(docker ps -a -q -f "${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest")
-            docker run -d -p 3000:3000 --name nextjs-docker ${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest
+            docker stop $(docker ps -a -q -f "${{ steps.docker_meta.outputs.tags }}")
+            docker rm $(docker ps -a -q -f "${{ steps.docker_meta.outputs.tags }}")
+            docker run -d -p 3000:3000 --name nextjs-docker ${{ steps.docker_meta.outputs.tags }}
             docker image prune -f
