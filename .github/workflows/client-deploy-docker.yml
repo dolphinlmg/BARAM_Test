@@ -10,9 +10,6 @@ on:
 jobs:
   client-deploy:
     runs-on: ubuntu-latest
-    defaults: 
-      run:
-        working-directory: ./client
 
     steps:
       - name: Checkout repository
@@ -30,7 +27,7 @@ jobs:
       - name: Build and Push to DockerHub
         uses: docker/build-push-action@v3
         with: 
-          context: .
+          context: ./client
           file: docker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest
