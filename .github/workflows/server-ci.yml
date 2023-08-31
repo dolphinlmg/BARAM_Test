@@ -36,7 +36,7 @@ jobs:
       - name: Check dependency cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          path: server/node_modules
           key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -65,7 +65,7 @@ jobs:
       - name: Check dependency cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          path: server/node_modules
           key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -94,7 +94,7 @@ jobs:
       - name: Check dependency cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          path: server/node_modules
           key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
