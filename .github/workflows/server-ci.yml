@@ -14,6 +14,10 @@ env:
 
 jobs:
   install_dependencies:
+    defaults:
+      run:
+        working-directory: server
+        
     name: Install Dependencies
     runs-on: ubuntu-latest
     timeout-minutes: 15
