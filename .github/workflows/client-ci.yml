@@ -9,12 +9,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  client-ci:
+  client-lint:
     defaults:
       run:
         working-directory: client
 
-    name: Client CI
+    name: Client Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +40,35 @@ jobs:
 
       - name: Lint
         run: yarn lint
+        
+  client-build:
+    defaults:
+      run:
+        working-directory: client
 
+    name: Client Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: 'client/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('client/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+        
       - name: Build
         run: yarn build
