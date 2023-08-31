@@ -6,15 +6,53 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - server/**
+  workflow_dispatch:
+
+env:
+  CACHE_DEPENDENCY_PATH: server/node_modules
+  HASH_PATH: server/yarn.lock
 
 jobs:
-  server-ci:
+  install_dependencies:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Compute dependency cache key
+        id: compute_lockfile_hash
+        run: echo "hash=${{ runner.os }}-node-${{ hashFiles('${{ env.HASH_PATH }}') }}" >> $GITHUB_OUTPUT
+
+      - name: Check dependency cache
+        id: cache_dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+    outputs:
+      dependency_cache_key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+      
+  server-lint:
     defaults:
       run:
         working-directory: server
 
-    name: Server CI
+    name: Server Lint
     runs-on: ubuntu-latest
+    needs: install_dependencies
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v3
@@ -23,17 +61,72 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'yarn'
-          cache-dependency-path: server/yarn.lock
 
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+      - name: Check dependency cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Lint
         run: yarn lint
+        
+  server-test:
+    defaults:
+      run:
+        working-directory: server
 
+    name: Server Test
+    runs-on: ubuntu-latest
+    needs: install_dependencies
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Check dependency cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            
       - name: Test
         run: yarn test --passWithNoTests
+        
+  server-build:
+    defaults:
+      run:
+        working-directory: server
 
+    name: Server Build
+    runs-on: ubuntu-latest
+    needs: install_dependencies
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Check dependency cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            
       - name: Build
         run: yarn build
