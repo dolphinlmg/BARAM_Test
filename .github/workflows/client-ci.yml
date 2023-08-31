@@ -26,7 +26,7 @@ jobs:
 
       - name: Compute dependency cache key
         id: compute_lockfile_hash
-        run: echo "::set-output name=hash::${{ runner.os }}-node-${{ hashFiles('client/yarn.lock') }}"
+        run: echo "hash=${{ runner.os }}-node-${{ hashFiles('client/yarn.lock') }}" >> $GITHUB_OUTPUT
 
       - name: Check dependency cache
         id: cache_dependencies
