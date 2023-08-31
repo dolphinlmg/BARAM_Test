@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v3
         with: 
           context: ./client
-          file: docker/Dockerfile
+          file: ./client/docker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_REPOSITORY }}/nextjs-docker:latest
           platforms: linux/amd64
