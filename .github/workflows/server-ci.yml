@@ -12,8 +12,8 @@ jobs:
   install_dependencies:
     uses: ./.github/workflows/install-dependency.yml
     with: 
-      cache-dependency-path: server/node_modules
-      hash-path: server/yarn.lock
+      cache-dependency-path: ./server/node_modules
+      hash-path: ./server/yarn.lock
       
   server-lint:
     defaults:
