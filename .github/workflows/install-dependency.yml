@@ -9,7 +9,9 @@ on:
         type: string
         required: true
     outputs:
-      dependency_cache_key: ${{ jobs.install_dependencies.outputs.dependency_cache_key }}
+      dependency_cache_key: 
+        description: "Dependency cache key"
+        value: ${{ jobs.install_dependencies.outputs.dependency_cache_key }}
 jobs:
   install_dependencies:
     defaults:
