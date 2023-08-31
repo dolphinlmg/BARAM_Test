@@ -8,16 +8,12 @@ on:
       - server/**
   workflow_dispatch:
 
-env:
-  CACHE_DEPENDENCY_PATH: server/node_modules
-  HASH_PATH: server/yarn.lock
-
 jobs:
   install_dependencies:
     uses: ./.github/workflows/install-dependency.yml
     with: 
-      cache-dependency-path: env.CACHE_DEPENDENCY_PATH
-      hash-path: env.HASH_PATH
+      cache-dependency-path: server/node_modules
+      hash-path: server/yarn.lock
       
   server-lint:
     defaults:
