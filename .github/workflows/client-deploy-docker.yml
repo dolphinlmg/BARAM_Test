@@ -2,11 +2,10 @@ name: 'Client Deploy Docker'
 
 on:
   push:
-    branches: [main]
-    paths:
-      - client/**
     tags: 
       - '**'
+    paths:
+      - client/**
   workflow_dispatch:
 
 jobs:
