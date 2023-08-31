@@ -10,6 +10,9 @@ on:
 jobs:
   client-deploy:
     runs-on: ubuntu-latest
+    defaults: 
+      run:
+        working-directory: ./client
 
     steps:
       - name: Checkout repository
