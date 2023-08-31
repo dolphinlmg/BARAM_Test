@@ -65,7 +65,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CACHE_DEPENDENCY_PATH }}
-          key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+          key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -94,7 +94,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CACHE_DEPENDENCY_PATH }}
-          key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+          key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
         
