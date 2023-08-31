@@ -16,8 +16,8 @@ jobs:
   install_dependencies:
     uses: ./.github/workflows/install-dependency.yml
     with: 
-      cache-dependency-path: ${{ env.CACHE_DEPENDENCY_PATH }}
-      hash-path: ${{ env.HASH_PATH }}
+      cache-dependency-path: env.CACHE_DEPENDENCY_PATH
+      hash-path: env.HASH_PATH
       
   server-lint:
     defaults:
