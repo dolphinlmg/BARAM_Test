@@ -27,7 +27,7 @@ jobs:
 
       - name: Compute dependency cache key
         id: compute_lockfile_hash
-        run: echo "hash=${{ runner.os }}-node-${{ hashFiles('${{ env.HASH_PATH }}') }}" >> $GITHUB_OUTPUT
+        run: echo "hash=${{ runner.os }}-node-${{ hashFiles(env.HASH_PATH) }}" >> $GITHUB_OUTPUT
 
       - name: Check dependency cache
         id: cache_dependencies
