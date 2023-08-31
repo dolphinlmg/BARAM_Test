@@ -8,43 +8,12 @@ on:
       - client/**
   workflow_dispatch:
 
-env:
-  CACHE_DEPENDENCY_PATH: client/node_modules
-
 jobs:
   install_dependencies:
-    defaults:
-      run:
-        working-directory: client
-    name: Install Dependencies
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Compute dependency cache key
-        id: compute_lockfile_hash
-        run: echo "hash=${{ runner.os }}-node-${{ hashFiles('client/yarn.lock') }}" >> $GITHUB_OUTPUT
-
-      - name: Check dependency cache
-        id: cache_dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
-          key: ${{ steps.compute_lockfile_hash.outputs.hash }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-    outputs:
-      dependency_cache_key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+    uses: ./.github/workflows/install-dependency.yml
+    with: 
+      cache-dependency-path: client/node_modules
+      hash-path: client/yarn.lock
       
   client-lint:
     defaults:
@@ -67,7 +36,7 @@ jobs:
       - name: Check dependency cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          path: client/node_modules
           key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -96,7 +65,7 @@ jobs:
       - name: Check dependency cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.CACHE_DEPENDENCY_PATH }}
+          path: client/node_modules
           key: ${{ needs.install_dependencies.outputs.dependency_cache_key }}
           restore-keys: |
             ${{ runner.os }}-node-
