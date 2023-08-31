@@ -6,6 +6,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - client/**
+  workflow_dispatch:
 
 jobs:
   client-ci:
@@ -23,10 +24,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'yarn'
-          cache-dependency-path: client/yarn.lock
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: 'client/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('client/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       - name: Lint
