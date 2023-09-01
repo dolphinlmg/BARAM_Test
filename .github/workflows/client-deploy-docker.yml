@@ -6,8 +6,6 @@ on:
       - client/**
     branches:
       - main
-    tags: 
-      - 'v*'
   workflow_dispatch:
 
 jobs:
