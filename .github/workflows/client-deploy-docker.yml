@@ -1,4 +1,4 @@
-name: 'Client Deploy Docker'
+name: 'Client Deploy'
 
 on:
   push:
@@ -6,12 +6,13 @@ on:
       - client/**
     branches:
       - main
+    tags:
+      - '**'
   workflow_dispatch:
 
 jobs:
   client-deploy:
     runs-on: ubuntu-latest
-    if: github.ref_name != 'main'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
