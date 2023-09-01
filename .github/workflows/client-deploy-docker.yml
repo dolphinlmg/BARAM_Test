@@ -4,10 +4,10 @@ on:
   push:
     paths:
       - client/**
-    tags: 
-      - '**'
     branches:
       - main
+    tags: 
+      - '**'
   workflow_dispatch:
 
 jobs:
